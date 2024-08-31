@@ -62,6 +62,10 @@ Of, if you upload the image to [Flickr](https://flickr.com) and you have both th
 
 ![](docs/images/go-california-landscapes-flickr.png)
 
+Or:
+
+![](docs/images/go-california-landscapes-flickr-map.png)
+
 ## To do
 
 The following tasks are on my "to do" list in no particular order and with no expected timeline. Any help or pull requests are welcome:
