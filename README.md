@@ -1,6 +1,6 @@
 # go-california-landscapes
 
-Go package to parse posts the [California Landscapes bot](https://botsin.space/users/CALandscapeBot/) and create new JPEG images with EXIF data derived from those posts.
+Go package to parse posts from the [California Landscapes bot](https://botsin.space/users/CALandscapeBot/) and create new JPEG images with embedded EXIF data derived from those posts.
 
 ## Motivation
 
