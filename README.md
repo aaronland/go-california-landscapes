@@ -20,7 +20,7 @@ $> ./bin/fetch -h
 Fetch one or more posts from the California Landscapes bot and create a new JPEG image with EXIF data derived from the post.
 Usage:
 	 ./bin/fetch [options] url(N) url(N)
-Valid options are:
+If url(N) is "-" then the list of URLs to fetch is read from STDIN. Valid options are:
   -destination string
     	The destination folder where images should be written. Default is the current working directory. (default ".")
   -verbose

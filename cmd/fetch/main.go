@@ -1,13 +1,15 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"flag"
 	"fmt"
-	"os"
 	"log"
 	"log/slog"
+	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/aaronland/go-california-landscapes"
 )
@@ -16,25 +18,25 @@ func main() {
 
 	var destination string
 	var verbose bool
-	
+
 	flag.StringVar(&destination, "destination", ".", "The destination folder where images should be written. Default is the current working directory.")
 	flag.BoolVar(&verbose, "verbose", false, "Enable verbose (debug) logging.")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Fetch one or more posts from the California Landscapes bot and create a new JPEG image with EXIF data derived from the post.\n")
 		fmt.Fprintf(os.Stderr, "Usage:\n\t %s [options] url(N) url(N)\n", os.Args[0])
-		fmt.Fprintf(os.Stderr, "Valid options are:\n")
+		fmt.Fprintf(os.Stderr, "If url(N) is \"-\" then the list of URLs to fetch is read from STDIN. Valid options are:\n")
 		flag.PrintDefaults()
 	}
-	
+
 	flag.Parse()
-	
+
 	if verbose {
 		slog.SetLogLoggerLevel(slog.LevelDebug)
 		slog.Debug("Verbose logging enabled")
 	}
 
-	ctx := context.Background()	
+	ctx := context.Background()
 	var root string
 
 	if destination == "." {
@@ -57,17 +59,36 @@ func main() {
 		root = abs_path
 	}
 
-	for _, url := range flag.Args() {
+	uris := flag.Args()
+
+	if len(uris) == 1 && uris[0] == "-" {
+
+		uris = make([]string, 0)
+
+		scanner := bufio.NewScanner(os.Stdin)
+
+		for scanner.Scan() {
+			uris = append(uris, strings.TrimSpace(scanner.Text()))
+		}
+
+		err := scanner.Err()
+
+		if err != nil {
+			log.Fatalf("Failed to scan STDIN, %v", err)
+		}
+	}
+
+	for _, url := range uris {
 
 		logger := slog.Default()
 		logger = logger.With("url", url)
-		
+
 		base := filepath.Base(url)
 		im_fname := fmt.Sprintf("%s.jpg", base)
 		im_path := filepath.Join(root, im_fname)
 
 		logger = logger.With("path", im_path)
-		
+
 		im_wr, err := os.OpenFile(im_path, os.O_RDWR|os.O_CREATE, 0644)
 
 		if err != nil {
@@ -93,4 +114,3 @@ func main() {
 		logger.Info("Successfully fetched image")
 	}
 }
-
